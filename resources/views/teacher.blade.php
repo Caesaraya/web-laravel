@@ -40,7 +40,7 @@
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $loop->iteration }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $user['name'] }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $user['subject_id'] }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $user->subject->name ?? '-'}}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $user['phone'] }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $user['email'] }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $user['address'] }}</td>

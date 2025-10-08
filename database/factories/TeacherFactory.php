@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Subject;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,10 +17,9 @@ class TeacherFactory extends Factory
      */
     public function definition(): array
     {
-        $subject = ['IPA','IPS'];
         return [
             'name' => fake()->name(),
-            'subject_id' => fake()->randomElement($subject),
+            'subject_id' => Subject::factory(),
             'phone' => fake()->phoneNumber(),
             'email' => fake()->unique()->safeEmail(),
             'address' => fake()->address(),
