@@ -13,6 +13,6 @@ class Subject extends Model
     protected $table = "subjects";
     protected $fillable = ['name']; 
        public function teacher(){
-        return $this->hasMany(Teacher::class, 'subject_id');
+        return $this->hasOne(Teacher::class, 'subject_id');
        }
 }
