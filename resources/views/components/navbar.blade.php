@@ -13,9 +13,11 @@
               <x-nav-link href="/" :active="request()->is('/')">Home</x-nav-link>
                 <x-nav-link href="/profil" :active="request()->is('profil')">Profile</x-nav-link>
                 <x-nav-link href="/kontak" :active="request()->is('kontak')">Kontak</x-nav-link>
-                <x-nav-link href="/student" :active="request()->is('student')">Student</x-nav-link>
                 <x-nav-link href="/guardian" :active="request()->is('guardian')">Guardian</x-nav-link>
+                <x-nav-link href="/student" :active="request()->is('student')">Student</x-nav-link>
                 <x-nav-link href="/classroom" :active="request()->is('classroom')">Classroom</x-nav-link>
+                <x-nav-link href="/teacher" :active="request()->is('teacher')">Teacher</x-nav-link>
+                <x-nav-link href="/subject" :active="request()->is('subject')">Subject</x-nav-link>
             </div>
           </div>
         </div>

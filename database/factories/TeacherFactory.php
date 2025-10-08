@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Classroom;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Student>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Teacher>
  */
-class StudentFactory extends Factory
+class TeacherFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,14 +16,13 @@ class StudentFactory extends Factory
      */
     public function definition(): array
     {
-
+        $subject = ['IPA','IPS'];
         return [
             'name' => fake()->name(),
-            'classroom_id' => Classroom::factory(),
+            'subject_id' => fake()->randomElement($subject),
+            'phone' => fake()->phoneNumber(),
             'email' => fake()->unique()->safeEmail(),
             'address' => fake()->address(),
-            'birthday' => fake()->date(),
-
         ];
     }
 }
