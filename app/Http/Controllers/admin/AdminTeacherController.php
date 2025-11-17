@@ -9,14 +9,15 @@ use Illuminate\Http\Request;
 
 class AdminTeacherController extends Controller
 {
- 
-      public function index()
+    public function index()
     {
         $teacher = Teacher::with('subject')->get();
+        $subjects = Subject::all(); // 🔹 Tambahkan ini untuk dropdown
 
-        return view('components.admin.teacher', [
+        return view('admin.teacher', [
             'title' => 'Data Guru',
-            'teacher' => $teacher
+            'teacher' => $teacher,
+            'subjects' => $subjects // 🔹 kirim ke view
         ]);
     }
 
@@ -26,68 +27,19 @@ class AdminTeacherController extends Controller
             'name'        => 'required|string|max:255',
             'email'       => 'required|email|unique:teachers,email',
             'phone'       => 'required|string|max:20',
-            'address'     => 'required|string',
-            'subject_name'=> 'required|string|max:255',
+            'address'     => 'required|string|max:255',
+            'subject_id'  => 'required|exists:subjects,id', // 🔹 ubah jadi ambil subject yang sudah ada
         ]);
 
-        // Buat subject baru
-        $subject = Subject::create([
-            'name' => $request->subject_name,
-        ]);
-
-        // Buat guru yang terhubung ke subject itu
         Teacher::create([
             'name'       => $request->name,
             'email'      => $request->email,
             'phone'      => $request->phone,
             'address'    => $request->address,
-            'subject_id' => $subject->id,
+            'subject_id' => $request->subject_id,
         ]);
 
-        return redirect()->back()->with('success', 'Guru dan subject berhasil ditambahkan!');
+        return redirect()->route('admin.teacher')
+            ->with('success', 'Guru berhasil ditambahkan!');
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-//
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }}
+}

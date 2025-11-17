@@ -10,42 +10,42 @@ use App\Models\Classroom;
 class AdminStudentController extends Controller
 {
     
-     public function index()
+    public function index()
     {
-        $student = Student::all();
-        $classrooms = Classroom::all(); // ← ini penting buat form dropdown kelas
+        $student = Student::with('classroom')->get();
 
-        return view('components.admin.students', [
+        return view('admin.students', [
             'title' => 'Data Student',
             'student' => $student,
+        ]);
+    }
+
+    public function create()
+    {
+        $classrooms = Classroom::all();
+
+        return view('components.admin.students-create', [
+            'title' => 'Tambah Student',
             'classrooms' => $classrooms
         ]);
     }
 
-public function store(Request $request)
-{
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'birthday' => 'required|date',
-        'email' => 'required|email|unique:students',
-        'address' => 'required|string',
-        'classroom_id' => 'required|exists:classrooms,id',
-    ]);
-
-    Student::create($validated);
-
-    // ✅ setelah create, kembali ke halaman sebelumnya (students view)
-    return redirect()->back()->with('success', 'Data student berhasil ditambahkan!');
-}
-
-    /**
-     * Show the form for creating a new resource.
-     */
-
-    public function create()
+    public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'birthday' => 'required|date',
+            'email' => 'required|email|unique:students',
+            'address' => 'required|string',
+            'classroom_id' => 'required|exists:classrooms,id',
+        ]);
+
+        Student::create($validated);
+
+        // ✅ Setelah tambah data, kembali ke halaman daftar student
+        return redirect()->route('admin.students')->with('success', 'Data student berhasil ditambahkan!');
     }
+
 
     /**
      * Store a newly created resource in storage.

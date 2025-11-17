@@ -31,18 +31,26 @@ Route::prefix('admin')->group(function () {
  
     // Route untuk dashboard
     Route::get('/dashboard', function () {
-        return view('components.admin.dashboard');
+        return view('admin.dashboard');
     })->name('admin.dashboard'); 
  
     // Route untuk admin students
     Route::get('/students', [AdminStudentController::class, 'index'])->name('admin.students');
     Route::post('/admin/student/store', [AdminStudentController::class, 'store'])->name('admin.student.store');
+   
     Route::get('/guardians', [AdminGuardianController::class, 'index'])->name('admin.guardians');
     Route::post('/guardians', [AdminGuardianController::class, 'store'])->name('admin.guardians.store');
+   
     Route::get('/kontaks', [AdminKontakController::class, 'index'])->name('admin.kontaks');
+   
     Route::get('/profil', [AdminProfilController::class, 'index'])->name('admin.profil');
+   
     Route::get('/classroom', [AdminClassroom::class, 'index'])->name('admin.classroom');
+   
     Route::get('/teacher', [AdminTeacherController::class, 'index'])->name('admin.teacher'); 
     Route::post('/teacher', [AdminTeacherController::class, 'store'])->name('admin.teacher.store');
+   
     Route::get('/subject', [AdminSubjectController::class, 'index'])->name('admin.subject'); 
+    Route::post('/admin/subject/store', [AdminSubjectController::class, 'store'])->name('admin.subject.store');
+
 });

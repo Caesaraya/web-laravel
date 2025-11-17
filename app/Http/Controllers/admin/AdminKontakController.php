@@ -9,7 +9,7 @@ class AdminKontakController extends Controller
 {
     public function index()
     {
-        return view('components.admin.kontaks',[
+        return view('admin.kontaks',[
             'title'=>'Kontak',
         ]);
     }

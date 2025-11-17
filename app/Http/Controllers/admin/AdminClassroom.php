@@ -11,7 +11,7 @@ class AdminClassroom extends Controller
     
     public function index()
     {$classroom = Classroom::all();
-        return view('components.admin.classroom', [
+        return view('admin.classroom', [
        'title' => 'Data Classroom',
        'classroom' => $classroom
     ]);

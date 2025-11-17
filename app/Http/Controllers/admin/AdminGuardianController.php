@@ -11,7 +11,7 @@ class AdminGuardianController extends Controller
         
     public function index()
     {$guardian = Guardian::all();
-        return view('components.admin.guardians', [
+        return view('admin.guardians', [
        'title' => 'Data Orang tua',
        'guardian' => $guardian
     ]);
@@ -20,15 +20,18 @@ class AdminGuardianController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
-    }
+public function create()
+{
+    return view('components.admin.guardians-create', [
+        'title' => 'Tambah Guardian'
+    ]);
+}
+
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+public function store(Request $request)
 {
     $request->validate([
         'name' => 'required|string|max:255',
@@ -39,8 +42,9 @@ class AdminGuardianController extends Controller
 
     Guardian::create($request->all());
 
-    return redirect()->back()->with('success', 'Guardian berhasil ditambahkan!');
+    return redirect()->route('admin.guardians')->with('success', 'Guardian berhasil ditambahkan!');
 }
+
 
 
     /**

@@ -9,7 +9,7 @@ class AdminProfilController extends Controller
 {
     public function index()
     {
-        return view('components.admin.profil', [
+        return view('admin.profil', [
         'title'   => 'Profil',
         'nama'    => 'Caesaraya Junior Nugroho',
         'tanggal' => '7 Juli 2009',

@@ -10,7 +10,7 @@ class AdminSubjectController extends Controller
 {
             public function index()
     {$subject = Subject::all();
-        return view('components/admin/subject', [
+        return view('admin.subject', [
        'title' => 'Data Subject',
        'subject' => $subject
     ]);
@@ -25,9 +25,18 @@ class AdminSubjectController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        //
-    }
+{
+    $request->validate([
+        'name' => 'required|string|max:255|unique:subjects,name',
+    ]);
+
+    Subject::create([
+        'name' => $request->name,
+    ]);
+
+    return redirect()->route('admin.subject')->with('success', 'Subject berhasil ditambahkan!');
+}
+
 
     /**
      * Display the specified resource.
