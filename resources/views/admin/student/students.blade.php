@@ -1,100 +1,13 @@
 <x-admin.layout>
     <x-slot:judul>{{ $title }}</x-slot:judul>
-
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 20px auto;
-        }
-
-        table, th, td {
-            border: 1px solid #444;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: center;
-            color: white;
-        }
-
-        th {
-            background: #6d6d6dff;
-        }
-
-        .btn {
-            display: inline-block;
-            background: #4caf50;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            margin: 20px auto;
-            display: block;
-            width: fit-content;
-            cursor: pointer;
-            border: none;
-        }
-
-        /* ===== Modal Style ===== */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.6);
-        }
-        .modal-content {
-            background-color: #2d2d2d;
-            margin: 5% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 40%;
-            border-radius: 10px;
-            color: white;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close:hover { color: white; }
-
-        label {
-            display: block;
-            margin-top: 10px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            color: black;            /* teks hitam */
-            background-color: white; /* latar putih */
-        }
-
-        .btn-simpan {
-            background: #4caf50;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/student.css') }}">
 
     <h2 style="text-align:center; color:white;">Daftar Student</h2>
 
-    <!-- Tombol buka modal -->
+    <!-- Tombol buka modal tambah -->
     <button id="openModalBtn" class="btn">+ Tambah Student</button>
 
-    <!-- Tabel data student -->
+    <!-- ===================== TABEL STUDENT ===================== -->
     <table>
         <thead>
             <tr>
@@ -104,10 +17,11 @@
                 <th>Alamat</th>
                 <th>Tanggal Lahir</th>
                 <th>Kelas</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($student as $index => $item)
+            @foreach ($student as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->name }}</td>
@@ -115,18 +29,31 @@
                     <td>{{ $item->address }}</td>
                     <td>{{ $item->birthday }}</td>
                     <td>{{ $item->classroom->name ?? '-' }}</td>
+
+                    <td>
+                        <!-- Tombol Update -->
+                        <button class="btn" style="background:orange; color:white;"
+                                onclick="openUpdateModal({{ $item->id }}, '{{ $item->name }}', '{{ $item->email }}', '{{ $item->address }}', '{{ $item->birthday }}', '{{ $item->classroom_id }}')">
+                            Edit
+                        </button>
+
+                        <!-- Tombol Delete -->
+                        <button class="btn" style="background:red; color:white;" onclick="openDeleteModal({{ $item->id }})">
+                            Delete
+                        </button>
+                    </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 
-    <!-- ===== Modal Tambah Student ===== -->
+
+    <!-- ===================== MODAL TAMBAH ===================== -->
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h3 style="text-align:center;">Tambah Student Baru</h3>
 
-            <!-- Form tambah student -->
             <form action="{{ route('admin.student.store') }}" method="POST">
                 @csrf
 
@@ -163,17 +90,50 @@
         </div>
     </div>
 
+
+    <!-- ===================== MODAL UPDATE (TERPISAH FILE) ===================== -->
+    @include('admin.student.update')
+
+    <!-- ===================== MODAL DELETE (TERPISAH FILE) ===================== -->
+    @include('admin.student.delete')
+
+
+    <!-- ===================== SCRIPT MODAL TAMBAH ===================== -->
     <script>
         const modal = document.getElementById("myModal");
         const btn = document.getElementById("openModalBtn");
         const span = document.getElementsByClassName("close")[0];
 
-        btn.onclick = () => { modal.style.display = "block"; }
-        span.onclick = () => { modal.style.display = "none"; }
+        btn.onclick = () => modal.style.display = "block";
+        span.onclick = () => modal.style.display = "none";
         window.onclick = (event) => {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+            if (event.target == modal) modal.style.display = "none";
         }
     </script>
+
+    <!-- ===================== SCRIPT MODAL UPDATE ===================== -->
+   <script>
+function openUpdateModal(id, name, email, address, birthday, classroom_id) {
+    const modal = document.getElementById('updateModal');
+    const form = document.getElementById('updateForm');
+
+    // Set action URL → wajib cocok dengan routing
+    form.action = '/admin/student/update/' + id;
+
+    // Isi form
+    document.getElementById('update_name').value = name;
+    document.getElementById('update_email').value = email;
+    document.getElementById('update_address').value = address;
+    document.getElementById('update_birthday').value = birthday;
+    document.getElementById('update_classroom_id').value = classroom_id;
+
+    modal.style.display = 'block';
+}
+
+function closeUpdateModal() {
+    document.getElementById('updateModal').style.display = 'none';
+}
+</script>
+
+
 </x-admin.layout>

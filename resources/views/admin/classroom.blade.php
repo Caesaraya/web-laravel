@@ -1,33 +1,7 @@
 <x-admin.layout>
     <x-slot:judul>{{ $title }}</x-slot:judul>
-    <style>
-        h2 {
-            color: white;
-        }
+    <link rel="stylesheet" href="{{ asset('css/classroom.css') }}">
 
-        table {
-            width: 60%;
-            margin: 20px auto;
-            border-collapse: collapse;
-        }
-
-        table,
-        th,
-        td {
-            border: 1px solid #444;
-        }
-
-        th,
-        td {
-            padding: 10px;
-            text-align: center;
-            color: white;
-        }
-
-        th {
-            background: #6d6d6dff;
-        }
-    </style>
     </head>
 
     <body>

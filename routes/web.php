@@ -35,9 +35,19 @@ Route::prefix('admin')->group(function () {
     })->name('admin.dashboard'); 
  
     // Route untuk admin students
-    Route::get('/students', [AdminStudentController::class, 'index'])->name('admin.students');
-    Route::post('/admin/student/store', [AdminStudentController::class, 'store'])->name('admin.student.store');
-   
+    Route::get('/students', [AdminStudentController::class, 'index'])
+        ->name('admin.student.students');
+//CREATE
+    Route::post('/student/store', [AdminStudentController::class, 'store'])
+        ->name('admin.student.store');
+//UPDATE
+    Route::put('/student/update/{id}', [AdminStudentController::class, 'update'])
+    ->name('admin.student.update');
+
+//DELETE
+    Route::delete('/student/destroy/{id}', [AdminStudentController::class, 'destroy'])
+        ->name('admin.student.destroy');
+
     Route::get('/guardians', [AdminGuardianController::class, 'index'])->name('admin.guardians');
     Route::post('/guardians', [AdminGuardianController::class, 'store'])->name('admin.guardians.store');
    

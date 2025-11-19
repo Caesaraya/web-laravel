@@ -10,76 +10,61 @@ use App\Models\Classroom;
 class AdminStudentController extends Controller
 {
     
-    public function index()
-    {
-        $student = Student::with('classroom')->get();
+public function index()
+{
+    $student = Student::with('classroom')->get();
+    // Mengambil semua data siswa dari database menggunakan model Student.
+    // ini berarti data (classroom) yang berelasi dengan setiap siswa
 
-        return view('admin.students', [
-            'title' => 'Data Student',
-            'student' => $student,
-        ]);
-    }
+    return view('admin.student.students', [
+        'title' => 'Data Student',
+        'student' => $student,
+    ]);
+}
 
-    public function create()
-    {
-        $classrooms = Classroom::all();
+public function store(Request $request)
+{
+    $validated = $request->validate([
+//  Melakukan Validasi data yang dikirim (request) sesuai aturan yang ditentukan:    
+        'name' => 'required|string|max:255',
+        'birthday' => 'required|date',
+        'email' => 'required|email|unique:students',
+        'address' => 'required|string',
+        'classroom_id' => 'required|exists:classrooms,id',
+    ]);
 
-        return view('components.admin.students-create', [
-            'title' => 'Tambah Student',
-            'classrooms' => $classrooms
-        ]);
-    }
+    Student::create($validated);
+//  Membuat record siswa baru di database menggunakan data yang sudah divalidasi.
+    return redirect()->route('admin.student.students')
+        ->with('success', 'Data student berhasil ditambahkan!');
+}
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'birthday' => 'required|date',
-            'email' => 'required|email|unique:students',
-            'address' => 'required|string',
-            'classroom_id' => 'required|exists:classrooms,id',
-        ]);
+public function update(Request $request, $id)
+{
+    $validated = $request->validate([
+//  Melakukan Validasi data seperti pada fungsi store.
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:students,email,' . $id,
+        'address' => 'required|string',
+        'birthday' => 'required|date',
+        'classroom_id' => 'required|exists:classrooms,id',
+    ]);
 
-        Student::create($validated);
+    $student = Student::findOrFail($id);
+//  Mencari data siswa di database berdasarkan $id.
+//  findOrFail akan menghentikan eksekusi dan menampilkan halaman 404 jika data siswa tidak ditemukan.
+    $student->update($validated);
+//  Memperbarui data siswa yang ditemukan dengan data yang sudah divalidasi.
+    return redirect()->back()->with('success', 'Data student berhasil diupdate!');
+}
 
-        // ✅ Setelah tambah data, kembali ke halaman daftar student
-        return redirect()->route('admin.students')->with('success', 'Data student berhasil ditambahkan!');
-    }
+public function destroy(string $id)
+{
+    Student::findOrFail($id)->delete();
+
+    return redirect()->route('admin.student.students')
+        ->with('success', 'Data berhasil dihapus');
+}
 
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

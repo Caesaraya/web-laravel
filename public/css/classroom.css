@@ -1,0 +1,26 @@
+h2 {
+            color: white;
+        }
+
+        table {
+            width: 60%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #444;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: center;
+            color: white;
+        }
+
+        th {
+            background: #6d6d6dff;
+        }
