@@ -8,74 +8,86 @@ use Illuminate\Http\Request;
 
 class AdminGuardianController extends Controller
 {
-        
     public function index()
-    {$guardian = Guardian::all();
-        return view('admin.guardians', [
-       'title' => 'Data Orang tua',
-       'guardian' => $guardian
-    ]);
+    {
+        $guardians = Guardian::all();
+
+        // Kolom untuk table component
+        $columns = [
+            ['key' => 'index', 'label' => 'NO', 'sortable' => false],
+            ['key' => 'name', 'label' => 'Nama', 'sortable' => true],
+            ['key' => 'job', 'label' => 'Pekerjaan', 'sortable' => true],
+            ['key' => 'phone', 'label' => 'No HP', 'sortable' => false],
+            ['key' => 'email', 'label' => 'Email', 'sortable' => true],
+        ];
+
+        // Fields form modal
+        $formFields = [
+            [
+                'name' => 'name',
+                'label' => 'Nama Lengkap',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => 'Masukkan nama lengkap'
+            ],
+            [
+                'name' => 'job',
+                'label' => 'Pekerjaan',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => 'Masukkan pekerjaan'
+            ],
+            [
+                'name' => 'phone',
+                'label' => 'No HP',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => '08xxxxxxxxxx'
+            ],
+            [
+                'name' => 'email',
+                'label' => 'Email',
+                'type' => 'email',
+                'required' => true,
+                'placeholder' => 'email@email.com'
+            ]
+        ];
+
+        return view('admin.guardian.index', compact('guardians', 'columns', 'formFields'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-public function create()
-{
-    return view('components.admin.guardians-create', [
-        'title' => 'Tambah Guardian'
-    ]);
-}
-
-
-    /**
-     * Store a newly created resource in storage.
-     */
-public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'job' => 'required|string|max:255',
-        'phone' => 'required|string|max:20',
-        'email' => 'required|email|max:255',
-    ]);
-
-    Guardian::create($request->all());
-
-    return redirect()->route('admin.guardians')->with('success', 'Guardian berhasil ditambahkan!');
-}
-
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name'  => 'required|string|max:255',
+            'job'   => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|email|unique:guardians,email',
+        ]);
+
+        Guardian::create($validated);
+
+        return redirect()->back()->with('success', 'Data guardian berhasil ditambahkan!');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Guardian $guardian)
     {
-        //
+        $validated = $request->validate([
+            'name'  => 'required|string|max:255',
+            'job'   => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|email|unique:guardians,email,' . $guardian->id,
+        ]);
+
+        $guardian->update($validated);
+
+        return redirect()->back()->with('success', 'Data guardian berhasil diperbarui!');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Guardian $guardian)
     {
-        //
-    }
+        $guardian->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect()->back()->with('success', 'Data guardian berhasil dihapus!');
     }
 }

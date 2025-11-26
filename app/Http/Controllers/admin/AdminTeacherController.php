@@ -3,43 +3,115 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Subject;
-use App\Models\Teacher;
 use Illuminate\Http\Request;
+use App\Models\Teacher;
+use App\Models\Subject;
 
 class AdminTeacherController extends Controller
 {
     public function index()
     {
-        $teacher = Teacher::with('subject')->get();
-        $subjects = Subject::all(); // 🔹 Tambahkan ini untuk dropdown
+        $teachers = Teacher::with('subject')->get();
+        $subjects = Subject::doesntHave('teacher')->get();
 
-        return view('admin.teacher', [
-            'title' => 'Data Guru',
-            'teacher' => $teacher,
-            'subjects' => $subjects // 🔹 kirim ke view
-        ]);
+        // Konfigurasi kolom table (SAMA FORMAT DGN STUDENT)
+        $columns = [
+            ['key' => 'index', 'label' => 'NO', 'sortable' => false],
+            ['key' => 'name', 'label' => 'Nama', 'sortable' => true],
+            [
+                'key' => 'subject',
+                'label' => 'Mata Pelajaran',
+                'relation' => 'subject',
+                'relation_key' => 'name',
+                'sortable' => false,
+            ],
+            ['key' => 'phone', 'label' => 'Telepon', 'sortable' => false],
+            ['key' => 'email', 'label' => 'Email', 'sortable' => true],
+            ['key' => 'address', 'label' => 'Alamat', 'sortable' => false],
+        ];
+
+        // Form fields (SAMA FORMAT DGN STUDENT)
+        $formFields = [
+            [
+                'name' => 'name',
+                'label' => 'Nama Lengkap',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => 'Masukkan nama lengkap'
+            ],
+            [
+                'name' => 'subject_id',
+                'label' => 'Mata Pelajaran',
+                'type' => 'select',
+                'required' => true,
+                'options' => $subjects->map(function($subject) {
+                    return [
+                        'value' => $subject->id,
+                        'label' => $subject->name
+                    ];
+                })->toArray()
+            ],
+            [
+                'name' => 'phone',
+                'label' => 'Telepon',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => '08xxxx'
+            ],
+            [
+                'name' => 'email',
+                'label' => 'Email',
+                'type' => 'email',
+                'required' => true,
+                'placeholder' => 'email@example.com'
+            ],
+            [
+                'name' => 'address',
+                'label' => 'Alamat',
+                'type' => 'textarea',
+                'required' => false,
+                'rows' => 3
+            ],
+        ];
+
+        return view('admin.teachers.index', compact('teachers', 'subjects', 'columns', 'formFields'))
+            ->with('title', 'Data Guru');
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name'        => 'required|string|max:255',
-            'email'       => 'required|email|unique:teachers,email',
-            'phone'       => 'required|string|max:20',
-            'address'     => 'required|string|max:255',
-            'subject_id'  => 'required|exists:subjects,id', // 🔹 ubah jadi ambil subject yang sudah ada
+        $validated = $request->validate([
+            'name'       => 'required|string|max:255',
+            'subject_id' => 'required|exists:subjects,id',
+            'phone'      => 'required|string|max:20',
+            'email'      => 'required|email|unique:teachers,email',
+            'address'    => 'nullable|string',
         ]);
 
-        Teacher::create([
-            'name'       => $request->name,
-            'email'      => $request->email,
-            'phone'      => $request->phone,
-            'address'    => $request->address,
-            'subject_id' => $request->subject_id,
+        Teacher::create($validated);
+
+        return redirect()->back()->with('success', 'Data guru berhasil ditambahkan!');
+    }
+
+    public function update(Request $request, Teacher $teacher)
+    {
+        $validated = $request->validate([
+            'name'       => 'required|string|max:255',
+            'subject_id' => 'required|exists:subjects,id',
+            'phone'      => 'required|string|max:20',
+            'email'      => 'required|email|unique:teachers,email,' . $teacher->id,
+            'address'    => 'nullable|string',
         ]);
 
-        return redirect()->route('admin.teacher')
-            ->with('success', 'Guru berhasil ditambahkan!');
+        $teacher->update($validated);
+
+        return redirect()->back()->with('success', 'Data guru berhasil diperbarui!');
+    }
+
+    public function destroy(Teacher $teacher)
+    {
+        $teacher->delete();
+
+        return redirect()->back()->with('success', 'Data guru berhasil dihapus!');
     }
 }

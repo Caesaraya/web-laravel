@@ -8,26 +8,49 @@ use Illuminate\Http\Request;
 
 class AdminClassroom extends Controller
 {
-    
+
     public function index()
-    {$classroom = Classroom::all();
-        return view('admin.classroom', [
-       'title' => 'Data Classroom',
-       'classroom' => $classroom
-    ]);
-    }
-
-    public function create()
     {
-        //
+        $classrooms = Classroom::with('students')->get();
+
+        // Kolom tabel
+        $columns = [
+            ['key' => 'index', 'label' => 'NO', 'sortable' => false],
+            ['key' => 'name', 'label' => 'Nama Kelas', 'sortable' => true],
+            [
+                'key' => 'students',
+                'label' => 'Daftar Siswa',
+                'formatter' => function ($item) {
+                    return $item->students->pluck('name')->join(', ');
+                }
+            ],
+        ];
+
+        // Field untuk form modal tambah
+        $formFields = [
+            [
+                'name' => 'name',
+                'label' => 'Nama Kelas',
+                'type' => 'text',
+                'required' => true,
+                'placeholder' => 'Contoh: XII RPL 1'
+            ],
+        ];
+
+        return view('admin.classroom.index', compact('classrooms', 'columns', 'formFields'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:100'
+        ]);
+
+        Classroom::create([
+            'name' => $request->name
+        ]);
+
+        return redirect()->back()->with('success', 'Kelas berhasil ditambahkan!');
     }
 
     /**
