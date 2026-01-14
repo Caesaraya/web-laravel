@@ -9,9 +9,21 @@ use App\Models\Classroom;
 
 class AdminStudentController extends Controller
 {
-  public function index()
+  public function index(Request $request)
     {
-        $students = Student::with('classroom')->get();
+          $search = $request->query('search');
+          
+        $students = Student::with('classroom')->when($search, function ($query, $search) {
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%")
+                  ->orWhereHas('classroom', function ($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  });
+        })
+        ->paginate(4)
+        ->withQueryString(); 
+         
         // Mengambil semua data siswa dari database
         $classrooms = Classroom::all();
         

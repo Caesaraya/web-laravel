@@ -9,9 +9,17 @@ use App\Models\Subject;
 
 class AdminTeacherController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $teachers = Teacher::with('subject')->get();
+         $search = $request->query('search');
+        $teachers = Teacher::with('subject')->when($search, function ($query, $search) {
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%");
+        })
+        ->paginate(4)
+        ->withQueryString(); 
+         
         $subjects = Subject::doesntHave('teacher')->get();
 
         // Konfigurasi kolom table (SAMA FORMAT DGN STUDENT)

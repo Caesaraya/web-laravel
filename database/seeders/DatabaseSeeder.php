@@ -19,8 +19,8 @@ class DatabaseSeeder extends Seeder
     {
         Guardian::factory()->count(15)->create();
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'admin',
+            'email' => 'admin123@email.com',
         ]);
 
         Classroom::factory(4)

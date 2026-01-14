@@ -21,7 +21,6 @@
             background: #6d6d6dff;
         }
     </style>
-</head>
 <body>
     <h2 style="text-align:center;">Guardian List</h2>
     <table>

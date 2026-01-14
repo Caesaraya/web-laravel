@@ -27,7 +27,27 @@
             </ul>
         </div>
     @endif
+<!-- Search Bar -->
+<form method="GET" class="mb-4">
+    <div class="flex gap-2 max-w-md">
+        <input
+            type="text"
+            name="search"
+            value="{{ request('search') }}"
+            placeholder="Cari nama, email, atau telepon..."
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm
+                   focus:border-blue-500 focus:ring-blue-500
+                   dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+        />
 
+        <button
+            type="submit"
+            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white
+                   hover:bg-blue-700">
+            Cari
+        </button>
+    </div>
+</form>
     <!-- Table -->
     <x-table :columns="$columns" :data="$guardians" has-actions>
         @forelse ($guardians as $guardian)
@@ -48,7 +68,12 @@
             </tr>
         @endforelse
     </x-table>
-
+<!-- Pagination -->
+@if ($guardians instanceof \Illuminate\Pagination\LengthAwarePaginator)
+    <div class="mt-4">
+        {{ $guardians->links() }}
+    </div>
+@endif
     <!-- Modal Tambah -->
     <x-form-modal 
         id="addGuardianModal" 
@@ -70,9 +95,14 @@
             <x-form-fields :fields="$formFields" :data="$guardian" />
         </x-form-modal>
 
-        <x-delete-modal 
-            id="deleteModal{{ $guardian->id }}" 
-            action="{{ route('admin.guardians.destroy', $guardian) }}" 
-        />
+        <x-form-modal id="deleteModal{{ $guardian->id }}" title="Konfirmasi Penghapusan"
+            action="{{ route('admin.guardians.destroy', $guardian) }}" method="DELETE">
+
+            <p class="text-gray-700 dark:text-gray-300">
+                Apakah Anda yakin ingin menghapus data {{ $guardian->name }}?
+            </p>
+
+        </x-form-modal>
+
     @endforeach
 </x-admin.layout>

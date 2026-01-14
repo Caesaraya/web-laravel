@@ -11,16 +11,57 @@
             <div class="ml-10 flex items-baseline space-x-4">
               <!-- Current: "bg-gray-900 dark:bg-gray-950/50 text-white", Default: "text-gray-300 hover:bg-white/5 hover:text-white" -->
               <x-nav-link href="/" :active="request()->is('/')">Home</x-nav-link>
-                <x-nav-link href="/profil" :active="request()->is('profil')">Profile</x-nav-link>
-                <x-nav-link href="/kontak" :active="request()->is('kontak')">Kontak</x-nav-link>
-                <x-nav-link href="/guardian" :active="request()->is('guardian')">Guardian</x-nav-link>
-                <x-nav-link href="/student" :active="request()->is('student')">Student</x-nav-link>
-                <x-nav-link href="/classroom" :active="request()->is('classroom')">Classroom</x-nav-link>
-                <x-nav-link href="/teacher" :active="request()->is('teacher')">Teacher</x-nav-link>
-                <x-nav-link href="/subject" :active="request()->is('subject')">Subject</x-nav-link>
+              <x-nav-link href="/profil" :active="request()->is('profil')">Profile</x-nav-link>
+              <x-nav-link href="/kontak" :active="request()->is('kontak')">Kontak</x-nav-link>
+              <x-nav-link href="/guardian" :active="request()->is('guardian')">Guardian</x-nav-link>
+              <x-nav-link href="/student" :active="request()->is('student')">Student</x-nav-link>
+              <x-nav-link href="/classroom" :active="request()->is('classroom')">Classroom</x-nav-link>
+              <x-nav-link href="/teacher" :active="request()->is('teacher')">Teacher</x-nav-link>
+              <x-nav-link href="/subject" :active="request()->is('subject')">Subject</x-nav-link>
             </div>
           </div>
         </div>
+        <div class="hidden md:block">
+            <div class="ml-4 flex items-center md:ml-6">
+
+                @guest
+                    <a href="{{ route('login') }}"
+                    class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                        Login
+                    </a>
+                @endguest
+
+                @auth
+                    <el-dropdown class="relative ml-3">
+                        <button class="flex items-center">
+                            <img src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}"
+                                class="size-8 rounded-full">
+                        </button>
+
+                        <el-menu anchor="bottom end" popover class="w-48 bg-gray-800 rounded-md">
+                            <a href="/admin/dashboard" class="block px-4 py-2 text-sm text-gray-300">Dashboard</a>
+
+                            @if(auth()->user()->role === 'admin')
+                                <a href="{{ route('admin.dashboard') }}"
+                                class="block px-4 py-2 text-sm text-gray-300">
+                                    Admin Dashboard
+                                </a>
+                            @endif
+
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full text-left px-4 py-2 text-sm text-gray-300">
+                                    Logout
+                                </button>
+                            </form>
+                        </el-menu>
+                    </el-dropdown>
+                @endauth
+
+            </div>
+        </div>
+
         <div class="hidden md:block">
           <div class="ml-4 flex items-center md:ml-6">
             <button type="button"

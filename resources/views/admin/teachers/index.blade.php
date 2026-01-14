@@ -24,6 +24,27 @@
         </div>
     @endif
 
+<!-- Search Bar -->
+<form method="GET" class="mb-4">
+    <div class="flex gap-2 max-w-md">
+        <input
+            type="text"
+            name="search"
+            value="{{ request('search') }}"
+            placeholder="Cari nama, email, atau telepon..."
+            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm
+                   focus:border-blue-500 focus:ring-blue-500
+                   dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+        />
+
+        <button
+            type="submit"
+            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white
+                   hover:bg-blue-700">
+            Cari
+        </button>
+    </div>
+</form>
     <x-table :columns="$columns" :data="$teachers" has-actions>
         @forelse ($teachers as $teacher)
             <x-table.row :item="$teacher" :columns="$columns" :index="$loop->iteration"
@@ -38,7 +59,12 @@
             </tr>
         @endforelse
     </x-table>
-
+<!-- Pagination -->
+@if ($teachers instanceof \Illuminate\Pagination\LengthAwarePaginator)
+    <div class="mt-4">
+        {{ $teachers->links() }}
+    </div>
+@endif
     <x-form-modal id="addTeacherModal" title="Tambah Data Guru" action="{{ route('admin.teachers.store') }}"
         method="POST">
         <x-form-fields :fields="$formFields" />
