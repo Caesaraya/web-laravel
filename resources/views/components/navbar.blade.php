@@ -25,7 +25,7 @@
             <div class="ml-4 flex items-center md:ml-6">
 
                 @guest
-                    <a href="{{ route('login') }}"
+                    <a href= "/login" :active="request()->is('login')"
                     class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
                         Login
                     </a>

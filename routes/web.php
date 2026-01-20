@@ -25,7 +25,19 @@ Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
 Route::get('/kontak', [KontakController::class, 'index'])->name('kontak');
 
 //login
-Route::get('/login', [AuthController::class, 'index'])->name('login');
+// ===== AUTH =====
+Route::get('/login', [AuthController::class, 'show_login'])
+    ->name('login')
+    ->middleware('guest'); // hanya untuk user yang belum login
+
+Route::post('/login', [AuthController::class, 'login'])
+    ->name('login.post')
+    ->middleware('guest');
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->name('logout')
+    ->middleware('auth'); // hanya user yang sudah login
+
 
 Route::get('/student', [StudentController::class, 'index'])->name('student');
 Route::get('/guardian', [GuardianController::class, 'index'])->name('guardian');
@@ -33,23 +45,21 @@ Route::get('/classroom', [ClassroomController::class, 'index'])->name('classroom
 Route::get('/teacher', [TeacherController::class, 'index'])->name('teacher');
 Route::get('/subject', [SubjectController::class, 'index'])->name('subject');
 
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'admin'])
+    ->group(function () {
 
-    Route::resource('students', AdminStudentController::class);
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
 
-    Route::resource('guardians', AdminGuardianController::class);
+        Route::resource('students', AdminStudentController::class);
+        Route::resource('guardians', AdminGuardianController::class);
+        Route::resource('classrooms', AdminClassroom::class);
+        Route::resource('teachers', AdminTeacherController::class);
+        Route::resource('subject', AdminSubjectController::class);
 
-    Route::resource('classrooms', AdminClassroom::class);
-
-    Route::resource('teachers', AdminTeacherController::class);
-
-    Route::resource('subject', AdminSubjectController::class);
-
-    Route::get('/kontaks', [AdminKontakController::class, 'index'])->name('kontaks');
-
-    Route::get('/profil', [AdminProfilController::class, 'index'])->name('profil');
-
-});
+        Route::get('/kontaks', [AdminKontakController::class, 'index'])->name('kontaks');
+        Route::get('/profil', [AdminProfilController::class, 'index'])->name('profil');
+    });
