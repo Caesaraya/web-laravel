@@ -21,8 +21,15 @@ class DatabaseSeeder extends Seeder
           User::create([
             'name' => 'Admin Sekolah',
             'email' => 'admin@gmail.com',
-            'password' => 'password',
+            'password' => Hash::make('password'),
             'role' => 'admin',
+        ]);
+
+        User::create([
+            'name' => 'John Doe',
+            'email' => 'John@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'user',
         ]);
 
         Guardian::factory()->count(15)->create();
